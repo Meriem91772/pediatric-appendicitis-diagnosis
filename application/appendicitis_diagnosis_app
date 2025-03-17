@@ -1,0 +1,52 @@
+import streamlit as st
+import pandas as pd
+import joblib
+from lightgbm import Booster
+
+#  Charger le modèle LightGBM
+model = Booster(model_file="data/best_model.txt")
+scaler = joblib.load("data/scaler.pkl")
+
+# Définir les noms des colonnes avec feature_name()
+FEATURES = model.feature_name()
+
+# Interface utilisateur
+st.title("🩺 Prédiction de l'Appendicite chez l'Enfant")
+
+# Dictionnaires de conversion
+sex_mapping = {"Masculin": 0, "Féminin": 1}
+boolean_mapping = {"Non": 0, "Oui": 1}
+
+# Entrées utilisateur optimisées
+inputs = {
+    "Age": st.number_input("Âge de l'enfant", min_value=0, max_value=18, value=10),
+    "Sex": sex_mapping[st.selectbox("Sexe", ["Masculin", "Féminin"])],
+    "Migratory_Pain": boolean_mapping[st.selectbox("Douleur migratoire", ["Non", "Oui"])],
+    "Lower_Right_Abd_Pain": boolean_mapping[st.selectbox("Douleur au bas droit de l'abdomen", ["Non", "Oui"])],
+    "Coughing_Pain": boolean_mapping[st.selectbox("Douleur en toussant", ["Non", "Oui"])],
+    "Nausea": boolean_mapping[st.selectbox("Nausée", ["Non", "Oui"])],
+    "Loss_of_Appetite": boolean_mapping[st.selectbox("Perte d'appétit", ["Non", "Oui"])],
+    "Body_Temperature": st.number_input("Température corporelle (°C)", min_value=35.0, max_value=42.0, value=37.0),
+    "WBC_Count": st.number_input("Nombre de globules blancs (10^9/L)", min_value=0.0, value=10.0),
+    "Neutrophil_Percentage": st.number_input("Pourcentage de neutrophiles", min_value=0.0, max_value=100.0, value=50.0),
+    "Neutrophilia": boolean_mapping[st.selectbox("Neutrophilie", ["Non", "Oui"])],
+    "RBC_in_Urine": boolean_mapping[st.selectbox("Présence de globules rouges dans les urines", ["Non", "Oui"])],
+    "WBC_in_Urine": boolean_mapping[st.selectbox("Présence de globules blancs dans les urines", ["Non", "Oui"])],
+    "CRP": st.number_input("CRP (mg/L)", min_value=0.0, value=5.0),
+    "Dysuria": boolean_mapping[st.selectbox("Dysurie", ["Non", "Oui"])],
+    "Stool": boolean_mapping[st.selectbox("Selles anormales", ["Non", "Oui"])],
+    "Peritonitis": boolean_mapping[st.selectbox("Signes de péritonite", ["Non", "Oui"])],
+    "Psoas_Sign": boolean_mapping[st.selectbox("Signe du psoas", ["Non", "Oui"])],
+    "Ipsilateral_Rebound_Tenderness": boolean_mapping[st.selectbox("Signe de rebond ipsilatéral", ["Non", "Oui"])]
+}
+# simulation de la prédiction
+if st.button("Prédire"):
+    input_df = pd.DataFrame([user_input])
+    prediction = 1 # Probabilité de test
+    st.write(f"Probabilité d'appendicite : {prediction:.2%}")
+
+
+from pyngrok import ngrok
+# Création d'un tunnel avec Ngrok
+public_url = ngrok.connect(port='8501')
+print("Accédez à l'application ici :", public_url)
