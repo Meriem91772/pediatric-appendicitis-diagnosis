@@ -71,6 +71,7 @@ best_model = grid_search.best_estimator_
 best_model.fit(X_train, y_train)
 
 print("Meilleurs paramètres LightGBM :", grid_search.best_params_)
+print(" Modèle LightGBM optimisé entraîné avec succès !")
 
 
 models = {
