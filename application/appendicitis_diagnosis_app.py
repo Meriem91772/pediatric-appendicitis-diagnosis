@@ -1,3 +1,5 @@
+import shap
+import matplotlib.pyplot as plt
 import streamlit as st
 import pandas as pd
 import joblib
@@ -39,14 +41,53 @@ inputs = {
     "Psoas_Sign": boolean_mapping[st.selectbox("Signe du psoas", ["Non", "Oui"])],
     "Ipsilateral_Rebound_Tenderness": boolean_mapping[st.selectbox("Signe de rebond ipsilatéral", ["Non", "Oui"])]
 }
-# simulation de la prédiction
+#  Prédiction avec le modèle
 if st.button("Prédire"):
-    input_df = pd.DataFrame([user_input])
-    prediction = 1 # Probabilité de test
-    st.write(f"Probabilité d'appendicite : {prediction:.2%}")
+    input_df = pd.DataFrame([inputs])
 
+    #  Ajouter les colonnes manquantes (à 0)
+    for col in FEATURES:
+        if col not in input_df.columns:
+            input_df[col] = 0
 
-from pyngrok import ngrok
-# Création d'un tunnel avec Ngrok
-public_url = ngrok.connect(port='8501')
-print("Accédez à l'application ici :", public_url)
+    #  Réorganiser l'ordre des colonnes
+    input_df = input_df[FEATURES]
+
+    #  Appliquer la normalisation
+    input_df = pd.DataFrame(scaler.transform(input_df), columns=input_df.columns)
+
+    #  Prédiction (en probabilité)
+    proba = model.predict(input_df, raw_score=False)[0]
+    prediction = int(proba > 0.5)  # Probabilité > 0.5 => Appendicite
+
+    #  Affichage du résultat
+    st.markdown(f"###  **Prédiction :** {' Appendicite' if prediction == 1 else ' Non Appendicite'}")
+    st.markdown(f"###  **Probabilité d'appendicite :** {proba:.2%}")
+
+    #  Interprétation SHAP
+    st.subheader(" Facteurs influençant la décision (SHAP)")
+
+    explainer = shap.TreeExplainer(model)
+    shap_values = explainer.shap_values(input_df)
+
+    #  Affichage des valeurs SHAP sous forme de graphique waterfall
+    fig, ax = plt.subplots(figsize=(8, 5))
+    shap.waterfall_plot(shap.Explanation(values=shap_values[0], base_values=explainer.expected_value, feature_names=input_df.columns))
+    st.pyplot(fig)
+
+    # Affichage sous forme de graphique force plot (conversion en image)
+    fig, ax = plt.subplots(figsize=(8, 5))
+    shap.force_plot(
+        explainer.expected_value,
+        shap_values[0],
+        input_df.iloc[0, :],
+        matplotlib=True,
+        show=False
+    )
+    plt.savefig("force_plot.png", bbox_inches='tight')
+    st.image("force_plot.png")
+
+    # Affichage sous forme de graphique bar plot
+    fig, ax = plt.subplots(figsize=(8, 5))
+    shap.bar_plot(shap_values[0], feature_names=input_df.columns, max_display=10)
+    st.pyplot(fig)
