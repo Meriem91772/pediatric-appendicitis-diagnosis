@@ -26,7 +26,7 @@ It combines prediction with **explainable AI**, making the model’s decisions e
 ##  Tech Stack
 **Python • Jupyter Notebook • Machine Learning • SHAP**
 
-## 📸 Preview
+##  Preview
 ![Preview](force_plot.png)
 
 ##  Goal
