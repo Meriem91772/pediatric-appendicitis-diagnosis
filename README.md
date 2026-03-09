@@ -1,7 +1,4 @@
 
-If you want it even more aesthetic, use this **extra pretty version**:
-
-```md
 <h1 align="center">🩺 Pediatric Appendicitis Diagnosis</h1>
 
 <p align="center">
