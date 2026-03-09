@@ -1,4 +1,4 @@
-<h1 align="center">🩺 Pediatric Appendicitis Diagnosis</h1>
+<h1 align="center"> Pediatric Appendicitis Diagnosis</h1>
 
 <p align="center">
   <b>Clinical decision support using Machine Learning & Explainable AI</b>
@@ -17,17 +17,17 @@
 This project uses **machine learning** to support the diagnosis of **pediatric appendicitis** from clinical data.  
 It combines prediction with **explainable AI**, making the model’s decisions easier to understand.
 
-## 💡 What’s inside
+##  What’s inside
 - Data cleaning and preprocessing
 - Model training and evaluation
 - Prediction app
 - SHAP visualizations for interpretation
 
-## 🛠 Tech Stack
+##  Tech Stack
 **Python • Jupyter Notebook • Machine Learning • SHAP**
 
 ## 📸 Preview
 ![Preview](force_plot.png)
 
-## 🎯 Goal
+##  Goal
 Build a medical AI tool that is not only accurate, but also **interpretable and useful** in practice.
